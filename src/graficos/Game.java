@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 
 /*
 *
-* Author: Gabriel Felix da Silva
+* Gabriel Felix da Silva
 *
 * Danki Code: Desenvolvimento de Jogos
 * */
@@ -21,14 +21,23 @@ public class Game extends Canvas implements Runnable {
     private final int HEIGHT = 120;
     private final int SCALE = 3;
 
+
     private BufferedImage image;
 
     private Spritesheet sheet;
-    private BufferedImage player;
+    private BufferedImage[] player;
+    private int frames = 0;
+    private int maxFrame = 20;
+    private int curAnimation = 0, maxAnimation = 3;
 
     public Game(){
         sheet = new Spritesheet("/Spritesheet.png");
-        player = sheet.getSprite(0,0,16,16);
+        player = new BufferedImage[4];
+        player[0] = sheet.getSprite(0,0,16,16);
+        player[1] = sheet.getSprite(16,0,16,16);
+        player[2] = sheet.getSprite(32,0,16,16);
+        player[3] = sheet.getSprite(48,0,16,16);
+
         setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
         initFrame();
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -65,7 +74,14 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void tick(){
-
+        frames ++;
+        if (frames > maxFrame){
+            frames = 0;
+            curAnimation ++;
+            if (curAnimation > maxAnimation){
+                curAnimation = 0;
+            }
+        }
     }
 
     public void render(){
@@ -79,8 +95,11 @@ public class Game extends Canvas implements Runnable {
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         /*Renderização do Jogo*/
-        g.drawImage(player,20,20,null);
+        Graphics2D g2 = (Graphics2D) g;
+        //g2.rotate(Math.toRadians(45),90+8,90+8);
+        g2.drawImage(player[curAnimation],90,90,null);
         /********/
+
         g.dispose();
         g = bs.getDrawGraphics();
         g.drawImage(image, 0,0, WIDTH*SCALE, HEIGHT*SCALE, null);
